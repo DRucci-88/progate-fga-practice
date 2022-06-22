@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe</title>
+
+  <!-- Ionic Library -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+
+  <!-- Axios Library -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script type="module">
+    import { menuController } from '@ionic/core';
+    window.menuController = menuController;
+  </script>
+
+</head>
+
+<body onload="firstSetup()">
+  <ion-app>
+
+    <ion-menu side="start" content-id="main-content">
+      <ion-header>
+        <ion-toolbar translucent>
+          <ion-title>Menu</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list>
+          <ion-item>
+            <ion-icon name="bug-outline" slot="start"></ion-icon>
+            <ion-label><a href="fizzbuzz.html">FizzBuzz</a></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="funnel-outline" slot="start"></ion-icon>
+            <ion-label><a href="pokemon.html">Pokemons</a></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="fast-food-outline" slot="start"></ion-icon>
+            <ion-label><a href="recipe.html">Recipe</a></ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+
+    <div class="ion-page" id="main-content">
+
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Pokemon</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+
+        <h1>Pokemon</h1>
+
+        <ion-button>
+          Get Pokemons
+        </ion-button>
+
+        <ion-grid>
+          <h2>Better UI for mobile layout</h2>
+          <ion-row>
+            <ion-col size="12" size-lg="6">
+              <ion-item>
+                <ion-label>Ingredients</ion-label>
+                <ion-select id="selectIngredient" interface="action-sheet" placeholder="Select Ingredient"
+                  cancel-text="Cancel Choice">
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-lg="6">
+              <ion-item>
+                <ion-label>Meal Type</ion-label>
+                <ion-select id="selectMealType" interface="action-sheet" placeholder="Select Meal Type"
+                  cancel-text="Cancel Choice">
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="12" size-lg="6">
+              <ion-button id="btnSearchRecipe" expand="block" shape="round" fill="solid">
+                Search Recipe
+              </ion-button>
+            </ion-col>
+            <ion-col size="12" size-lg="6">
+              <ion-button id="btnClearRecipe" expand="block" shape="round" fill="outline">
+                Clear Recipe
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+
+        <ion-grid>
+          <ion-row id="resultRecipeCard">
+
+            <!-- <ion-col size="6" size-sm="4" size-lg="3">
+            <ion-card>
+              <ion-img src="https://picsum.photos/200"></ion-img>
+              <ion-card-content>
+                <ion-card-subtitle>
+                  <a style="text-decoration: none;" href="#" target="_blank">Show Detail ...</a>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  Label
+                </ion-card-title>
+              </ion-card-content>
+            </ion-card>
+          </ion-col> -->
+
+          </ion-row>
+        </ion-grid>
+
+      </ion-content>
+
+    </div>
+  </ion-app>
+
+</body>
+
+</html>
