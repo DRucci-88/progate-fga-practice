@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <!-- Ionic Library -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+
+  <!-- Axios Library -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body onload="firstSetup()">
+  <ion-app>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Recipe</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-lg="6">
+            <ion-item>
+              <ion-label>Ingredients</ion-label>
+              <ion-select id="selectIngredient" interface="action-sheet" placeholder="Select Ingredient"
+                cancel-text="Cancel Choice">
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12" size-lg="6">
+            <ion-item>
+              <ion-label>Meal Type</ion-label>
+              <ion-select id="selectMealType" interface="action-sheet" placeholder="Select Meal Type"
+                cancel-text="Cancel Choice">
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-lg="6">
+            <ion-button id="btnSearchRecipe" expand="block" shape="round" fill="solid">
+              Search Recipe
+            </ion-button>
+          </ion-col>
+          <ion-col size="12" size-lg="6">
+            <ion-button id="btnClearRecipe" expand="block" shape="round" fill="outline">
+              Clear Recipe
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+
+      <ion-grid>
+        <ion-row id="resultRecipeCard">
+
+          <!-- <ion-col size="6" size-sm="4" size-lg="3">
+            <ion-card>
+              <ion-img src="https://picsum.photos/200"></ion-img>
+              <ion-card-content>
+                <ion-card-subtitle>
+                  <a style="text-decoration: none;" href="#" target="_blank">Show Detail ...</a>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  Label
+                </ion-card-title>
+              </ion-card-content>
+            </ion-card>
+          </ion-col> -->
+
+        </ion-row>
+      </ion-grid>
+
+    </ion-content>
+  </ion-app>
+
+  <script>
+    const APP_ID = 'ea1d37d5';
+    const APP_KEY = 'fd382a172ba8d6668c0430dc9c14a181';
+
+    // const APP_ID = '3f4f310f';
+    // const APP_KEY = 'a3fd0d28cd6a2b5c664de96da482a7c1';
+
+    const ingredients = ['Chicken', 'Egg', 'Fish', 'Meat', 'Rice', 'Cheese', 'Noodle'];
+    const mealType = ['Breakfast', 'Dinner', 'Lunch', 'Snack'];
+
+    const selectIngredient = document.getElementById('selectIngredient');
+    const selectMealType = document.getElementById('selectMealType');
+    const btnSearchRecipe = document.getElementById('btnSearchRecipe');
+    const btnClearRecipe = document.getElementById('btnClearRecipe');
+    const resultRecipeCard = document.getElementById('resultRecipeCard');
+    
+    btnClearRecipe.addEventListener('click', (e) => {
+      e.preventDefault();
+      resultRecipeCard.innerHTML = '';
+    });
+
+    btnSearchRecipe.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const ingredient = selectIngredient.value;
+      const mealType = selectMealType.value;
+
+      if (ingredient === undefined) {
+        await presentAlert('Cannot Search Recipe', 'Must fill the ingredients');
+        console.log('Error');
+        return;
+      }
+
+      const url = getListRecipeURL(ingredient, mealType);
+      // console.log(url);
+
+      // Open Loading Animation
+      const loading = presentLoading();
+      loading.present();
+
+      axios.get(url)
+        .then(response => {
+          // console.log(response);
+          const recipes = response.data.hits; // Array of recipe
+          recipes.forEach(value => {
+            console.log(value);
+            resultRecipeCard.innerHTML += recipeCard(value.recipe.label, value.recipe.image, value.recipe.url);
+          });
+          // Close loading animation after load all recipe card
+          loading.dismiss();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+    });
+
+    const recipeCard = (label, imageURL, detailURL) => {
+      return `<ion-col size="6" size-sm="4" size-lg="3">
+            <ion-card>
+              <ion-img src='${imageURL}' alt='${label}'></ion-img>
+              <ion-card-content>
+                <ion-card-subtitle>
+                  <a href="${detailURL}" target="_blank" style="text-decoration: none;">
+                    Show Detail ...
+                  </a>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  ${label}
+                </ion-card-title>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>`;
+    }
+
+    const firstSetup = () => {
+      ingredients.forEach(value => {
+        // console.log(value);
+        const ionSelectOption = document.createElement('ion-select-option');
+        ionSelectOption.value = value;
+        ionSelectOption.textContent = value;
+        selectIngredient.appendChild(ionSelectOption);
+      });
+
+      mealType.forEach(value => {
+        // console.log(value);
+        const ionSelectOption = document.createElement('ion-select-option');
+        ionSelectOption.value = value;
+        ionSelectOption.textContent = value;
+        selectMealType.appendChild(ionSelectOption);
+      });
+    }
+
+    const getListRecipeURL = (ingredient, mealType) => {
+      let url =
+        `https://api.edamam.com/api/recipes/v2?type=public&q=${ingredient}&app_id=${APP_ID}&app_key=${APP_KEY}`;
+      if (mealType !== undefined)
+        url += `&mealType=${mealType}`;
+
+      return url;
+    }
+
+    const presentAlert = (header, message) => {
+      const alert = document.createElement('ion-alert');
+      alert.header = header || 'Empty Header';
+      // alert.subHeader = 'Subheader';
+      alert.message = message || 'Empty Message';
+      alert.buttons = ['OK'];
+
+      document.body.appendChild(alert);
+      return alert.present();
+
+      // return alert.onDidDismiss();
+    }
+
+    const presentLoading = () => {
+      const loading = document.createElement('ion-loading');
+      loading.spinner = 'circular';
+      loading.message = 'Please wait...';
+      // loading.backdropDismiss = true;
+
+      document.body.appendChild(loading);
+      return loading;
+    }
+  </script>
+
+</body>
+
+</html>
